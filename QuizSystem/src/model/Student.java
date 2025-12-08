@@ -3,11 +3,11 @@ package model;
 public class Student {
 
     private String studentId;
-    private String StudentName;
+    private String studentName;
 
-    public Student(String studentId, String StudentName) {
+    public Student(String studentId, String studentName) {
         this.studentId = studentId;
-        this.StudentName = StudentName;
+        this.studentName = studentName;
     }
     public String getStudentId() {
         return studentId;
@@ -16,9 +16,9 @@ public class Student {
         this.studentId = studentId;
     }
     public String getStudentName() {
-        return StudentName;
+        return studentName;
     }
     public void setStudentName(String studentName) {
-        StudentName = studentName;
+        this.studentName = studentName;
     }
 }
