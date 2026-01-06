@@ -8,6 +8,39 @@ import java.util.Scanner;
 
 public class Main {
 
+    private static Difficulty askDifficulty(Scanner scanner) {
+        while (true) {
+            System.out.println("\nChoose difficulty level:");
+            System.out.println("1) EASY");
+            System.out.println("2) MEDIUM");
+            System.out.println("3) HARD");
+            System.out.println("4) MIXED");
+            System.out.print("Your choice: ");
+
+            String input = scanner.nextLine().trim();
+
+            if (input.equalsIgnoreCase("EASY")) return Difficulty.EASY;
+            if (input.equalsIgnoreCase("MEDIUM")) return Difficulty.MEDIUM;
+            if (input.equalsIgnoreCase("HARD")) return Difficulty.HARD;
+            if (input.equalsIgnoreCase("MIXED")) return Difficulty.MIXED;
+
+            try {
+                int c = Integer.parseInt(input);
+                switch (c) {
+                    case 1: return Difficulty.EASY;
+                    case 2: return Difficulty.MEDIUM;
+                    case 3: return Difficulty.HARD;
+                    case 4: return Difficulty.MIXED;
+
+                    default:
+                        System.out.println("Invalid difficulty. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid difficulty. Please try again.");
+            }
+        }
+    }
+
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
@@ -68,24 +101,27 @@ public class Main {
                     continue;
             }
 
-            List<Question> questions = QuestionLoader.loadFromFile(fileName);
+            Difficulty chosenDifficulty = askDifficulty(scanner);
+            List<Question> questions = QuestionLoader.loadFromFile(fileName, chosenDifficulty);
 
             if (questions.isEmpty()) {
-                System.out.println("No questions found for this exam. Check the file: " + fileName);
+                System.out.println("\nNo questions found for this exam with difficulty: " + chosenDifficulty);
+                System.out.println("Check the file: " + fileName + " or add questions with this difficulty.\n");
                 continue;
             }
 
             Quiz quiz = new Quiz(questions, timeLimitSeconds);
-
             QuizEngine engine = new QuizEngine(quiz);
 
             System.out.println("\nStarting quiz for " + student.getStudentName() + "...");
+            System.out.println("Difficulty: " + chosenDifficulty);
             System.out.println("Time limit: " + quiz.getTimeLimitSeconds() + " seconds\n");
 
             engine.startWithTimer();
 
             System.out.println("\n====================================");
             System.out.println("Student: " + student);
+
             int maxScore = quiz.getMaxScore();
             int finalScore = quiz.calculateScore();
             double percentage = (maxScore == 0) ? 0 : (finalScore * 100.0 / maxScore);
@@ -93,7 +129,6 @@ public class Main {
             System.out.println("Your final score: " + finalScore + " out of " + maxScore);
             System.out.printf("Percentage: %.2f%%\n", percentage);
             System.out.println("====================================\n");
-
         }
     }
 }
